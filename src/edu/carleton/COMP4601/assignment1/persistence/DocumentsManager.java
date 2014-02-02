@@ -108,7 +108,7 @@ public class DocumentsManager extends AbstractMongoDBManager {
 		Document a = new Document(id);
 		a.setName(name);
 		a.setText(text);
-		a.setTags(new ArrayList<String>(Arrays.asList(tags.split(" "))));
+		a.setTags(new ArrayList<String>(Arrays.asList(tags.split(":"))));
 		a.setLinks(new ArrayList<String>(Arrays.asList(links.split(" "))));
 		try {
 			save(a);
