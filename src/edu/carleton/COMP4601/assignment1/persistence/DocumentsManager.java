@@ -1,13 +1,18 @@
 package edu.carleton.COMP4601.assignment1.persistence;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.UndirectedGraph;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
+import edu.carleton.COMP4601.assignment1.Document;
 import edu.carleton.COMP4601.assignment1.common.Marshaller;
 
 
@@ -15,8 +20,8 @@ public class DocumentsManager extends AbstractMongoDBManager {
 
 	private static DocumentsManager manager;
 
-	private static String DEFAULT_DB = "webcrawler";
-	private static String DEFAULT_COLLECTION = "documents_inclass4";
+	private static String DEFAULT_DB = "bank";
+	private static String DEFAULT_COLLECTION = "documents";
 	
 	
 	/**
@@ -77,6 +82,24 @@ public class DocumentsManager extends AbstractMongoDBManager {
 			return "";
 		return collection.getName();
 	}
+	
+	public static List<Document> convertDBObject(List<DBObject> list){
+		List<Document> docs = new ArrayList<Document>(); 
+		for(DBObject obj: list){
+			docs.add(new Document(obj.toMap()));
+		}
+		return docs;
+	}
+
+	/**
+	 * Find all documents in the database that has the given field.
+	 * Returns a List<DBObject> if documents were found.
+	 * 
+	 * @param field
+	 * @param new_value
+	 * @param searchQuery
+	 * @return List<DBObject>
+	 */
 
 	public static void main(String[] args) {
 		DocumentsManager manager = DocumentsManager.getDefault();
@@ -106,7 +129,6 @@ public class DocumentsManager extends AbstractMongoDBManager {
 			UndirectedGraph<String, DefaultEdge> graph = (UndirectedGraph<String, DefaultEdge>) Marshaller.deserializeObject(b);
 			System.out.println("	Graph	\n"+graph.toString());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
