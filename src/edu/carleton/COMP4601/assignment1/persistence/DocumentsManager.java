@@ -127,7 +127,7 @@ public class DocumentsManager extends AbstractMongoDBManager {
 		doc.put("links", a.getLinks());
 		
 		if(collection != null){
-			System.out.println("Creating document with name:" + a.getName());
+//			System.out.println("Creating document with name:" + a.getName());
 			return collection.insert(doc, WriteConcern.SAFE);
 		}
 		else
