@@ -77,8 +77,23 @@ public class SDA {
 	@GET
 	@Path("documents")
 	@Produces(MediaType.APPLICATION_XML)
-	public List<Document> getDocuments() throws UnknownHostException {
+	public List<Document> getDocumentsXML() throws UnknownHostException {
 		return collection.getDocuments();
+	}
+	
+	@GET
+	@Path("documents")
+	@Produces(MediaType.TEXT_HTML)
+	public String getDocumentsHTML() throws UnknownHostException {
+		List<Document> resultsDoc = collection.getDocuments();
+		String returnStr = "Your search returned " + resultsDoc.size() + " results<table>";
+		
+		for(Document d: resultsDoc){
+			returnStr += d.toHTML();
+		}
+		returnStr += "</table>";
+		
+		return returnStr;
 	}
 
 	@GET
@@ -88,6 +103,21 @@ public class SDA {
 		List<Document> resultsDoc = new ArrayList<Document>();
 		resultsDoc = collection.search(tags);
 		return resultsDoc;
+	}
+	
+	@GET
+	@Path("search/{tags}")
+	@Produces(MediaType.TEXT_HTML)
+	public String searchDocumentsHTML(@PathParam("tags") String tags) throws UnknownHostException {
+		List<Document> resultsDoc = collection.search(tags);
+		String returnStr = "Your search returned " + resultsDoc.size() + " results<table>";
+		
+		for(Document d: resultsDoc){
+			returnStr += d.toHTML();
+		}
+		returnStr += "</table>";
+		
+		return returnStr;
 	}
 
 	@POST
@@ -103,7 +133,7 @@ public class SDA {
 		int newId = new Integer(id).intValue();
 		collection.create(newId,name,tags,links,text);
 
-		servletResponse.sendRedirect("../create_document.html");
+//		servletResponse.sendRedirect("../create_document.html");
 	}
 
 	@Path("{doc}")

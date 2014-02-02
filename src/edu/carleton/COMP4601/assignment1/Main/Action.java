@@ -2,6 +2,8 @@ package edu.carleton.COMP4601.assignment1.Main;
 
 import java.io.FileNotFoundException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+
 
 
 import edu.carleton.COMP4601.assignment1.*;
@@ -38,12 +41,29 @@ public class Action {
 
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
-	public Document getDocumentHTML() throws UnknownHostException {
+	public Document getDocumentXML() throws UnknownHostException {
 		Document a = DocumentsManager.getDefault().load(new Integer(id));
 		if (a == null) {
 			throw new RuntimeException("No such Document: " + id);
 		}
+		else{
+			System.out.println("id:" + a.getId() + " name:" + a.getName());
+		}
 		return a;
+	}
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public String getDocumentHTML() throws UnknownHostException {
+		Document a = DocumentsManager.getDefault().load(new Integer(id));
+		if (a == null) {
+			throw new RuntimeException("No such Document: " + id);
+		}
+		else{
+			System.out.println("id:" + a.getId() + " name:" + a.getName());
+		}
+		
+		
+		return "Name: <b>" + a.getName() + "</b><br />ID:<b>" + a.getId() + "</b><br />Text: <b>" + a.getText() + "</b><br />Tags:<b>" + a.getTags().toString() + "</b><br />Links:<b>" + a.getLinks().toString();
 	}
 
 	@PUT

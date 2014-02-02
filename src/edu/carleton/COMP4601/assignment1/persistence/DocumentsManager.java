@@ -144,9 +144,6 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	}
 
 	public void save(Document a){
-//		if(this.exists("id",a.getId())){
-//			this.delete("id", a.getId());
-//		}
 		this.add(a);
 	}
 
@@ -154,7 +151,7 @@ public class DocumentsManager extends AbstractMongoDBManager {
 		BasicDBObject query = new BasicDBObject("id", id);
 		DBCursor cursor = collection.find(query);
 		BasicDBObject obj = (BasicDBObject) cursor.next();
-		Document doc = new Document(obj.getInt("id"));
+		Document doc = new Document(obj.toMap());
 
 		return doc;
 

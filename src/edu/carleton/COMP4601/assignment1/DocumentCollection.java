@@ -27,7 +27,7 @@ public class DocumentCollection {
 	
 	public List<Document> search(String tag){
 		List<Document> results = new ArrayList<Document>();
-		List<DBObject> resultsObj = DocumentsManager.getDefault().search("text", tag, false);
+		List<DBObject> resultsObj = DocumentsManager.getDefault().search("tags", tag, false);
 		
 		if (resultsObj != null && resultsObj.size() > 0){
 			results = DocumentsManager.convertDBObject(resultsObj);
