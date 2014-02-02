@@ -1,8 +1,11 @@
 package edu.carleton.COMP4601.assignment1.persistence;
 
 import java.io.IOException;
+
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.UndirectedGraph;
@@ -12,14 +15,18 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
+import com.mongodb.WriteConcern;
+import com.mongodb.WriteResult;
+
 import edu.carleton.COMP4601.assignment1.Document;
+import edu.carleton.COMP4601.assignment1.Documents;
+
 import edu.carleton.COMP4601.assignment1.common.Marshaller;
 
 
 public class DocumentsManager extends AbstractMongoDBManager {
 
 	private static DocumentsManager manager;
-
 	private static String DEFAULT_DB = "bank";
 	private static String DEFAULT_COLLECTION = "documents";
 	
@@ -101,6 +108,43 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	 * @return List<DBObject>
 	 */
 
+	public Document create(int id, String name, String tags, String links, String text) {
+		Document a = new Document(id);
+		a.setName(name);
+		a.setText(tags);
+		System.out.println("Creating document with name:" + name);
+		try {
+			save(a);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return a;
+	}
+
+	public synchronized WriteResult add(Document doc){
+		if(collection != null){
+			return collection.insert(doc, WriteConcern.SAFE);
+		}
+		else
+			return null;
+	}
+
+	
+	public boolean remove(Document doc) {
+		return remove(doc.getId());
+	}
+	
+	public boolean remove(Integer doc_id) {
+		return this.delete("id", doc_id);
+	}
+
+	public void save(Document a){
+		if(this.exists("id",a.getId())){
+			this.delete("id", a.getId());
+		}
+		this.add(a);
+	}
+	
 	public static void main(String[] args) {
 		DocumentsManager manager = DocumentsManager.getDefault();
 		// Query #1: Find the first 20 documents and print their URL's and Parent-URLs
