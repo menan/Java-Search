@@ -16,8 +16,8 @@ Submission
 ### Notes:
 1- In order for tags and links to be created, the following points has to be considered:
 
-- Use the SPACE character to seperate each tag/link.
-- It's assumed that a tag/link is one word.
+- Use the ':' character to seperate each tag.
+- Use the SPACE character to seperate each link.
  
 2- To test XML representation, you can use the following commands in the Terminal:
 
