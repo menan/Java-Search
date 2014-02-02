@@ -104,20 +104,45 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	 * @return List<DBObject>
 	 */
 
-	public Document create(int id, String name, String tags, String links, String text) {
+	public boolean create(int id, String name, String tags, String links, String text) {
 		Document a = new Document(id);
 		a.setName(name);
 		a.setText(text);
 		a.setTags(new ArrayList<String>(Arrays.asList(tags.split(":"))));
 		a.setLinks(new ArrayList<String>(Arrays.asList(links.split(" "))));
-		try {
-			save(a);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return a;
+		
+		return save(a);
 	}
 
+	
+	public boolean remove(Document doc) {
+		return remove(doc.getId());
+	}
+	
+	public boolean remove(Integer doc_id) {
+		if (this.load(doc_id) == null)
+			return false;
+		else
+			return this.delete("id", doc_id);
+	}
+	public Document load(int id){
+		BasicDBObject query = new BasicDBObject("id", id);
+		DBCursor cursor = collection.find(query);
+		if (cursor.count() > 0){
+			BasicDBObject obj = (BasicDBObject) cursor.next();
+			Document doc = new Document(obj.toMap());
+			return doc;
+		}
+		else{
+			return null;
+		}
+
+	}
+
+	public boolean save(Document a){
+		return this.add(a).getLastError().ok();
+	}
+	
 	public synchronized WriteResult add(Document a){
 
 		BasicDBObject doc = new BasicDBObject("id", a.getId());
@@ -133,30 +158,6 @@ public class DocumentsManager extends AbstractMongoDBManager {
 		else
 			return null;
 	}
-
-	
-	public boolean remove(Document doc) {
-		return remove(doc.getId());
-	}
-	
-	public boolean remove(Integer doc_id) {
-		return this.delete("id", doc_id);
-	}
-
-	public void save(Document a){
-		this.add(a);
-	}
-
-	public Document load(int id){
-		BasicDBObject query = new BasicDBObject("id", id);
-		DBCursor cursor = collection.find(query);
-		BasicDBObject obj = (BasicDBObject) cursor.next();
-		Document doc = new Document(obj.toMap());
-
-		return doc;
-
-	}
-
 	
 	public static void main(String[] args) {
 		DocumentsManager manager = DocumentsManager.getDefault();

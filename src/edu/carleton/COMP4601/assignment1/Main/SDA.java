@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import com.mongodb.DBObject;
@@ -48,7 +49,7 @@ public class SDA {
 	}
 
 	@GET
-	@Produces(MediaType.TEXT_XML)
+	@Produces(MediaType.APPLICATION_XML)
 	public String sayXML() {
 		return "<?xml version=\"1.0\"?>" + "<sda> " + name + " </sda>";
 	}
@@ -86,12 +87,12 @@ public class SDA {
 	@Produces(MediaType.TEXT_HTML)
 	public String getDocumentsHTML() throws UnknownHostException {
 		List<Document> resultsDoc = collection.getDocuments();
-		String returnStr = "Your search returned " + resultsDoc.size() + " results<table>";
+		String returnStr = "<h2>Documents</h2>There are " + resultsDoc.size() + " documents<br /><br /><table>";
 		
 		for(Document d: resultsDoc){
 			returnStr += d.toHTML();
 		}
-		returnStr += "</table>";
+		returnStr += "</table><br /><br /><a href=\"../../create_document.html\">New Document</a>";
 		
 		return returnStr;
 	}
@@ -123,17 +124,78 @@ public class SDA {
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void newDocument(@FormParam("id") String id,
+	public String newDocumentHTML(@FormParam("id") String id,
 			@FormParam("name") String name,
 			@FormParam("tags") String tags,
 			@FormParam("links") String links,
 			@FormParam("text") String text,
 			@Context HttpServletResponse servletResponse) throws IOException {
 
-		int newId = new Integer(id).intValue();
-		collection.create(newId,name,tags,links,text);
+		if (name == null || name.isEmpty() || id == null || id.isEmpty() || tags == null || tags.isEmpty() || links == null || links.isEmpty()){
+			servletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			return "You have to fill all the fields. Please go <a href=\"javascript:history.back()\">back</a> and fill it.";
+		}
+		else{
 
-		servletResponse.sendRedirect("/COMP4601Assignment1-100770296/rest/sda/documents");
+			int newId = new Integer(id).intValue();
+			Document doc = DocumentsManager.getDefault().load(newId);
+			if (doc == null){
+				boolean put = DocumentsManager.getDefault().create(newId,name,tags,links,text);
+				if (put){
+					servletResponse.setStatus(HttpServletResponse.SC_OK);
+					return "Created successfully. <a href=\"/COMP4601Assignment1-100770296/rest/sda/documents\">Click Here</a> to view documents.";
+				}
+				else{
+					servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+					return "Error creating document.";
+				}
+			}
+			else{
+
+				servletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				return "Sorry, but there is already a record exists with id " + newId + ". Please go <a href=\"javascript:history.back()\">back</a> and change it.";
+			}
+		}
+			
+
+	}
+
+
+	@POST
+	@Produces(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Document newDocumentXML(@FormParam("id") String id,
+			@FormParam("name") String name,
+			@FormParam("tags") String tags,
+			@FormParam("links") String links,
+			@FormParam("text") String text,
+			@Context HttpServletResponse servletResponse) throws IOException {
+
+		if (name == null || name.isEmpty() || id == null || id.isEmpty() || tags == null || tags.isEmpty() || links == null || links.isEmpty()){
+			servletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			return null;
+		}
+		else{
+
+			int newId = new Integer(id).intValue();
+			Document doc = DocumentsManager.getDefault().load(newId);
+			if (doc == null){
+				boolean put = DocumentsManager.getDefault().create(newId,name,tags,links,text);
+				if (put){
+					servletResponse.setStatus(HttpServletResponse.SC_OK);
+					return DocumentsManager.getDefault().load(newId);
+				}
+				else{
+					servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+					return null;
+				}
+			}
+			else{
+				servletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				return null;
+			}
+		}
+		
 	}
 
 	@Path("{doc}")

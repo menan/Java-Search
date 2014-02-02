@@ -92,9 +92,12 @@ public class Document extends BasicDBObject{
 	public void removeLink(String link) {
 		links.remove(link);
 	}
+	public String getURL(){
+		return "/COMP4601Assignment1-100770296/rest/sda/" + id;
+	}
 	
 	public String toHTML(){
-		return "<tr><td><a href=\"/COMP4601Assignment1-100770296/rest/sda/" + id+ "\">" + id + "</a></td><td>" + name + "</td></tr>";
+		return "<tr><td><a href=\"" + getURL() + "\">" + id + "</a></td><td>" + name + "</td></tr>";
 		
 	}
 }

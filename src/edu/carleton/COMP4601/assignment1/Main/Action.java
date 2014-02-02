@@ -45,7 +45,8 @@ public class Action {
 	public Document getDocumentXML() throws UnknownHostException {
 		Document a = DocumentsManager.getDefault().load(new Integer(id));
 		if (a == null) {
-			throw new RuntimeException("No such Document: " + id);
+//			throw new RuntimeException("No such Document: " + id);
+			System.out.println("No such Document: " + id);
 		}
 		else{
 			System.out.println("XML - Getting document with id:" + a.getId() + " name:" + a.getName());
@@ -57,7 +58,7 @@ public class Action {
 	public String getDocumentHTML() throws UnknownHostException {
 		Document a = DocumentsManager.getDefault().load(new Integer(id));
 		if (a == null) {
-			throw new RuntimeException("No such Document: " + id);
+			return "No such Document: " + id;
 		}
 		else{
 			System.out.println("HTML - Getting document with id:" + a.getId() + " name:" + a.getName());
@@ -74,7 +75,7 @@ public class Action {
 		if(a.getTags() != null)
 			builder.append("<br />Tags:<b>" + a.getTags().toString() + "</b>");
 		// Links
-		if(a.getTags() != null)
+		if(a.getLinks() != null)
 			builder.append("<br />Links:<b>" + a.getLinks().toString());
 		
 		
@@ -91,7 +92,7 @@ public class Action {
 
 	@DELETE
 	public Response deleteDocument() {
-		if (DocumentsManager.getDefault().delete("id",new Integer(id))){
+		if (DocumentsManager.getDefault().remove(new Integer(id))){
 			return Response.status(HttpServletResponse.SC_OK).build();
 		}else{
 			System.out.println("Action - deleteDocument(): something went wrong deletion didn't go through");
@@ -101,8 +102,12 @@ public class Action {
 
 	private Response putAndGetResponse(Document document) throws NumberFormatException, FileNotFoundException, JAXBException, UnknownHostException {
 		Response res = null;
-		DocumentsManager.getDefault().save(document);
-		res = Response.created(uriInfo.getAbsolutePath()).build();
+		boolean put = DocumentsManager.getDefault().save(document);
+		if (put)
+			res = Response.created(uriInfo.getAbsolutePath()).build();
+		else
+			res = Response.status(HttpServletResponse.SC_NO_CONTENT).build();
+			
 		return res;
 	}
 }
