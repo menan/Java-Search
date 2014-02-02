@@ -22,7 +22,7 @@ Submission
 2- To test XML representation, you can use the following commands in the Terminal:
 
 - For "GET" requests:
-> `curl -G "format=APPLICATION_XML" http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/`
+> `curl -H "Accept: application/xml" -X GET "http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/"`
 
 - For "POST" requests:
-> `curl -d "id=1000&name=somename 1&tags=go home&links=google.com&format=APPLICATION_XML" http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/`
+> `curl -H "Accept: text/html" -d 'id=1000&name=Doc 1&text=Hello World&links=scs.carleton.ca&tags=COMP 4106:Assignment 1:REST Application' -X POST "http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/"`
