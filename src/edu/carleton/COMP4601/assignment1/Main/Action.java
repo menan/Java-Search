@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,7 +48,7 @@ public class Action {
 			throw new RuntimeException("No such Document: " + id);
 		}
 		else{
-			System.out.println("id:" + a.getId() + " name:" + a.getName());
+			System.out.println("XML - Getting document with id:" + a.getId() + " name:" + a.getName());
 		}
 		return a;
 	}
@@ -59,11 +60,25 @@ public class Action {
 			throw new RuntimeException("No such Document: " + id);
 		}
 		else{
-			System.out.println("id:" + a.getId() + " name:" + a.getName());
+			System.out.println("HTML - Getting document with id:" + a.getId() + " name:" + a.getName());
 		}
 		
+		StringBuilder builder = new StringBuilder();
+		// Name
+		builder.append("Name: <b>" + a.getName() + "</b>");
+		// ID
+		builder.append("<br />ID:<b>" + a.getId() + "</b>");
+		// Text
+		builder.append("<br />Text: <b>" + a.getText() + "</b>");
+		// Tags
+		if(a.getTags() != null)
+			builder.append("<br />Tags:<b>" + a.getTags().toString() + "</b>");
+		// Links
+		if(a.getTags() != null)
+			builder.append("<br />Links:<b>" + a.getLinks().toString());
 		
-		return "Name: <b>" + a.getName() + "</b><br />ID:<b>" + a.getId() + "</b><br />Text: <b>" + a.getText() + "</b><br />Tags:<b>" + a.getTags().toString() + "</b><br />Links:<b>" + a.getLinks().toString();
+		
+		return builder.toString();
 	}
 
 	@PUT
@@ -75,9 +90,13 @@ public class Action {
 	}
 
 	@DELETE
-	public void deleteDocument() throws NumberFormatException, FileNotFoundException, JAXBException, UnknownHostException {
-		if (!DocumentsManager.getDefault().delete("id",new Integer(id)))
-			throw new RuntimeException("Document " + id + " not found");
+	public Response deleteDocument() {
+		if (DocumentsManager.getDefault().delete("id",new Integer(id))){
+			return Response.status(HttpServletResponse.SC_OK).build();
+		}else{
+			System.out.println("Action - deleteDocument(): something went wrong deletion didn't go through");
+			return Response.status(HttpServletResponse.SC_NO_CONTENT).build();
+		}
 	}
 
 	private Response putAndGetResponse(Document document) throws NumberFormatException, FileNotFoundException, JAXBException, UnknownHostException {

@@ -194,15 +194,14 @@ public abstract class AbstractMongoDBManager {
 	 * @return
 	 */
 	public synchronized boolean delete(String field, Object value){
-		BasicDBObject deleteQuery = new BasicDBObject();
-		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", value));
 
 		if(collection != null){
-			DBCursor cursor = collection.find(deleteQuery);
-			while (cursor.hasNext()) {
-			    DBObject item = cursor.next();
-			    collection.remove(item);
-			}	
+			WriteResult wr = collection.remove(new BasicDBObject().append( field , value));
+			if(!wr.getLastError().ok()){
+				System.out.println("AbstractMongoDBManager - deleting document failed");
+				return false;
+			}
+			return true;
 		}
 		return false;
 	}
@@ -340,8 +339,7 @@ public abstract class AbstractMongoDBManager {
 	 * @return boolean
 	 */
 //	public synchronized boolean exists(String field, Object objToFind){
-//		BasicDBObject deleteQuery = new BasicDBObject();
-//		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", objToFind));
+//		BasicDBObject deleteQuery = new BasicDBObject(field.toLowerCase(), objToFind));
 //
 //		if(collection != null){
 //			DBCursor cursor = collection.find(deleteQuery);
