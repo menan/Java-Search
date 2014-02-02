@@ -82,17 +82,8 @@ public class Action {
 
 	private Response putAndGetResponse(Document document) throws NumberFormatException, FileNotFoundException, JAXBException, UnknownHostException {
 		Response res = null;
-
-//		if (document.getBalance() < 0){
-//			//res = Response.noContent().build();
-//			System.out.println("balalnce must have been below 0: " + document.getBalance());
-//			res = Response.notModified("Balance is below 0").build();
-//		}
-//		else{
-			DocumentsManager.getDefault().save(document);
-			res = Response.created(uriInfo.getAbsolutePath()).build();
-			//DocumentsJAXB.getInstance().getModel().put(Document.getId(), Document);
-//		}
+		DocumentsManager.getDefault().save(document);
+		res = Response.created(uriInfo.getAbsolutePath()).build();
 		return res;
 	}
 }

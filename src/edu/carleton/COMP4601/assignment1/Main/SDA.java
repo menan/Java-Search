@@ -133,7 +133,7 @@ public class SDA {
 		int newId = new Integer(id).intValue();
 		collection.create(newId,name,tags,links,text);
 
-//		servletResponse.sendRedirect("../create_document.html");
+		servletResponse.sendRedirect("/COMP4601Assignment1-100770296/rest/sda/documents");
 	}
 
 	@Path("{doc}")
