@@ -184,6 +184,30 @@ public abstract class AbstractMongoDBManager {
 	    return null;
 	}
 	
+	
+	/**
+	 * Deletes a document that has the same value of the passed <field>.
+	 * Returns true if successful, otherwise returns false.
+	 * 
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	public synchronized boolean delete(String field, Object value){
+		BasicDBObject deleteQuery = new BasicDBObject();
+		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", value));
+
+		if(collection != null){
+			DBCursor cursor = collection.find(deleteQuery);
+			while (cursor.hasNext()) {
+			    DBObject item = cursor.next();
+			    collection.remove(item);
+			}	
+		}
+		return false;
+	}
+
+	
 	/**
 	 * Deletes all documents that have a value of the <field> equals
 	 * to one of the listed values in the given <list>.
@@ -193,7 +217,7 @@ public abstract class AbstractMongoDBManager {
 	 * @param list
 	 * @return
 	 */
-	public synchronized boolean deleteall(String field,List<Object> list){
+	public synchronized boolean delete(String field,List<Object> list){
 		BasicDBObject deleteQuery = new BasicDBObject();
 		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", list));
 
@@ -207,6 +231,7 @@ public abstract class AbstractMongoDBManager {
 		return false;
 	}
 
+	
 	/**
 	 * Deletes all documents that meet the <deleteQuery> criteria.
 	 * Returns true if successful, otherwise returns false.
@@ -306,6 +331,25 @@ public abstract class AbstractMongoDBManager {
 	    return null;
 	}
 
+	/**
+	 * Checks wither a document exist or not.
+	 * Returns true if a document was found, otherwise it returns false.
+	 * 
+	 * @param field
+	 * @param stringToFind
+	 * @return boolean
+	 */
+	public synchronized boolean exists(String field, Object objToFind){
+		BasicDBObject deleteQuery = new BasicDBObject();
+		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", objToFind));
+
+		if(collection != null){
+			DBCursor cursor = collection.find(deleteQuery);
+			return cursor.hasNext();
+		}
+		return false;
+
+	}
 	
 }
 
