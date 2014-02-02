@@ -25,4 +25,4 @@ Submission
 > `curl -G "format=APPLICATION_XML" http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/`
 
 - For "POST" requests:
-> `curl -d "id=1000&name=somename 1&tags=go home&links=google.com&format=APPdICATION_XML" http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/`
+> `curl -d "id=1000&name=somename 1&tags=go home&links=google.com&format=APPLICATION_XML" http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/`
