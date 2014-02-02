@@ -161,43 +161,7 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	
 	public static void main(String[] args) {
 		DocumentsManager manager = DocumentsManager.getDefault();
-		// Query #1: Find the first 20 documents and print their URL's and Parent-URLs
-		List<DBObject> results1 = manager.findNDocsStatringAtIndex("url", 20, 0);
-		System.out.println("Query #1 - Results size: "+results1.size());
-		for(DBObject r : results1){
-			System.out.println("URL: "+r.get("url") +" | Parent-URL: "+r.get("parent_url"));
-		//	System.out.println(h.toString());
-		}
-		
-		// Query #2: Search for a string
-		List<DBObject> results2 = manager.search("TeXt","alamoudi", false);
-		System.out.println("Query #2 - Results size: "+results2.size());
-		for(DBObject r : results2){
-			System.out.println("URL: "+r.get("url") +" | Parent-URL: "+r.get("parent_url"));
-		//	System.out.println(h.toString());
-		}
-
-
-		// Query #3: Get graph
-		DBObject results3 = manager.find("graph");
-		System.out.println("Query #3 - Result: "+results3.toString());
-		byte[] b = (byte[]) results3.get("graph");
-		try {
-			@SuppressWarnings("unchecked")
-			UndirectedGraph<String, DefaultEdge> graph = (UndirectedGraph<String, DefaultEdge>) Marshaller.deserializeObject(b);
-			System.out.println("	Graph	\n"+graph.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		// Query #4: Delete a list of URLs
-		String url1 = "http://www.ics.uci.edu/community/";
-		String url2 = "http://www.ics.uci.edu/about/bren/";
-		
-		List<DBObject> url1_before = manager.search("url", url1, true);
-		List<DBObject> url2_before = manager.search("url", url2, true);
-		System.out.println("Query #4 - URL counts   URL1:"+url1_before.size()+", URL2:"+url2_before.size());
-
+		manager.drop();
 		
 	}
 }

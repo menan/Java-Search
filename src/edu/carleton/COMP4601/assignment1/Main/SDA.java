@@ -87,6 +87,9 @@ public class SDA {
 	@Produces(MediaType.TEXT_HTML)
 	public String getDocumentsHTML() throws UnknownHostException {
 		List<Document> resultsDoc = collection.getDocuments();
+		if (resultsDoc.size() == 0){
+			return "No Documents found :( <br /><a href=\"../../create_document.html\">Click Here</a> to add a document";
+		}
 		String returnStr = "<h2>Documents</h2>There are " + resultsDoc.size() + " documents<br /><br /><table>";
 		
 		for(Document d: resultsDoc){
@@ -143,7 +146,7 @@ public class SDA {
 				boolean put = DocumentsManager.getDefault().create(newId,name,tags,links,text);
 				if (put){
 					servletResponse.setStatus(HttpServletResponse.SC_OK);
-					return "Created successfully. <a href=\"/COMP4601Assignment1-100770296/rest/sda/documents\">Click Here</a> to view documents.";
+					return "Created successfully. <a href=\"/COMP4601Assignment1-100770296/rest/sda/documents\">Click Here</a> to view all documents.";
 				}
 				else{
 					servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
