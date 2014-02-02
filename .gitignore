@@ -3,6 +3,8 @@
 *.com
 *.class
 .classpath
+.project
+.settings/
 .dll
 *.exe
 *.o
