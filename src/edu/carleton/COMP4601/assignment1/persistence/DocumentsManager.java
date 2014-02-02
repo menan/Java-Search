@@ -1,25 +1,21 @@
 package edu.carleton.COMP4601.assignment1.persistence;
 
 import java.io.IOException;
-
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.UndirectedGraph;
 
+import com.mongodb.DBObject;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
-
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
 import edu.carleton.COMP4601.assignment1.Document;
-import edu.carleton.COMP4601.assignment1.Documents;
 
 import edu.carleton.COMP4601.assignment1.common.Marshaller;
 
@@ -27,7 +23,7 @@ import edu.carleton.COMP4601.assignment1.common.Marshaller;
 public class DocumentsManager extends AbstractMongoDBManager {
 
 	private static DocumentsManager manager;
-	private static String DEFAULT_DB = "bank";
+	private static String DEFAULT_DB = "sda";
 	private static String DEFAULT_COLLECTION = "documents";
 	
 	
@@ -111,8 +107,9 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	public Document create(int id, String name, String tags, String links, String text) {
 		Document a = new Document(id);
 		a.setName(name);
-		a.setText(tags);
-		System.out.println("Creating document with name:" + name);
+		a.setText(text);
+		a.setTags(new ArrayList<String>(Arrays.asList(tags.split(" "))));
+		a.setLinks(new ArrayList<String>(Arrays.asList(links.split(" "))));
 		try {
 			save(a);
 		} catch (Exception e) {
@@ -121,8 +118,16 @@ public class DocumentsManager extends AbstractMongoDBManager {
 		return a;
 	}
 
-	public synchronized WriteResult add(Document doc){
+	public synchronized WriteResult add(Document a){
+
+		BasicDBObject doc = new BasicDBObject("id", a.getId());
+		doc.put("name", a.getName());
+		doc.put("text", a.getText());
+		doc.put("tags", a.getTags());
+		doc.put("links", a.getLinks());
+		
 		if(collection != null){
+			System.out.println("Creating document with name:" + a.getName());
 			return collection.insert(doc, WriteConcern.SAFE);
 		}
 		else
@@ -139,11 +144,22 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	}
 
 	public void save(Document a){
-		if(this.exists("id",a.getId())){
-			this.delete("id", a.getId());
-		}
+//		if(this.exists("id",a.getId())){
+//			this.delete("id", a.getId());
+//		}
 		this.add(a);
 	}
+
+	public Document load(int id){
+		BasicDBObject query = new BasicDBObject("id", id);
+		DBCursor cursor = collection.find(query);
+		BasicDBObject obj = (BasicDBObject) cursor.next();
+		Document doc = new Document(obj.getInt("id"));
+
+		return doc;
+
+	}
+
 	
 	public static void main(String[] args) {
 		DocumentsManager manager = DocumentsManager.getDefault();

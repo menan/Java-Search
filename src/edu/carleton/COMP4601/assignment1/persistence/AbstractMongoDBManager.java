@@ -339,17 +339,17 @@ public abstract class AbstractMongoDBManager {
 	 * @param stringToFind
 	 * @return boolean
 	 */
-	public synchronized boolean exists(String field, Object objToFind){
-		BasicDBObject deleteQuery = new BasicDBObject();
-		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", objToFind));
-
-		if(collection != null){
-			DBCursor cursor = collection.find(deleteQuery);
-			return cursor.hasNext();
-		}
-		return false;
-
-	}
+//	public synchronized boolean exists(String field, Object objToFind){
+//		BasicDBObject deleteQuery = new BasicDBObject();
+//		deleteQuery.put(field.toLowerCase(), new BasicDBObject("$in", objToFind));
+//
+//		if(collection != null){
+//			DBCursor cursor = collection.find(deleteQuery);
+//			return cursor.hasNext();
+//		}
+//		return false;
+//
+//	}
 	
 }
 

@@ -20,6 +20,7 @@ import javax.xml.bind.JAXBException;
 
 
 import edu.carleton.COMP4601.assignment1.*;
+import edu.carleton.COMP4601.assignment1.persistence.DocumentsManager;
 
 public class Action {
 	@Context
@@ -38,7 +39,7 @@ public class Action {
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
 	public Document getDocumentHTML() throws UnknownHostException {
-		Document a = Documents.getInstance().find(new Integer(id));
+		Document a = DocumentsManager.getDefault().load(new Integer(id));
 		if (a == null) {
 			throw new RuntimeException("No such Document: " + id);
 		}
@@ -55,7 +56,7 @@ public class Action {
 
 	@DELETE
 	public void deleteDocument() throws NumberFormatException, FileNotFoundException, JAXBException, UnknownHostException {
-		if (!Documents.getInstance().close(new Integer(id)))
+		if (!DocumentsManager.getDefault().delete("id",new Integer(id)))
 			throw new RuntimeException("Document " + id + " not found");
 	}
 
@@ -68,7 +69,7 @@ public class Action {
 //			res = Response.notModified("Balance is below 0").build();
 //		}
 //		else{
-			Documents.getInstance().save(document);
+			DocumentsManager.getDefault().save(document);
 			res = Response.created(uriInfo.getAbsolutePath()).build();
 			//DocumentsJAXB.getInstance().getModel().put(Document.getId(), Document);
 //		}

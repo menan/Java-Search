@@ -38,12 +38,26 @@ public class DocumentCollection {
 		return results;
 		
 	}
-	
+
+	public Document create(int id, String name, String tags, String links, String text) {
+		Document a = new Document(id);
+		a.setName(name);
+		a.setText(tags);
+		System.out.println("Creating document with name:" + name);
+		try {
+			DocumentsManager.getDefault().create(id,name,tags,links,text);
+			documents.add(a);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return a;
+	}
 	public int size() {
 		return documents.size();
 	}
 
 	public List<Document> getDocuments() {
+		setDocuments(DocumentsManager.convertDBObject(DocumentsManager.getDefault().findAll("id")));
 		return documents;
 	}
 

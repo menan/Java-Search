@@ -100,12 +100,8 @@ public class SDA {
 			@FormParam("text") String text,
 			@Context HttpServletResponse servletResponse) throws IOException {
 
-//		String newDescription = description;
-//		if (newDescription == null)
-//			newDescription = "";
-
 		int newId = new Integer(id).intValue();
-		Documents.getInstance().create(newId,name,tags,links,text);
+		collection.create(newId,name,tags,links,text);
 
 		servletResponse.sendRedirect("../create_document.html");
 	}
