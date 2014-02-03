@@ -30,3 +30,9 @@ Submission
 
 - For "POST" requests:
 > `curl -H "Accept: text/html" -d 'id=1000&name=Doc 1&text=Hello World&links=scs.carleton.ca&tags=COMP 4106:Assignment 1:REST Application' -X POST "http://localhost:8080/COMP4601SDA/rest/sda/"`
+
+3- To update a document use PUT request. For example (XXXX = id):
+> `curl -H "Accept: application/xml" -X PUT "http://localhost:8080/COMP4601SDA/rest/sda/XXXX"`
+
+
+
