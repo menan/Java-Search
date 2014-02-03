@@ -146,7 +146,7 @@ public class SDA {
 				boolean put = DocumentsManager.getDefault().create(newId,name,tags,links,text);
 				if (put){
 					servletResponse.setStatus(HttpServletResponse.SC_OK);
-					return "Created successfully. <a href=\"/COMP4601Assignment1-100770296/rest/sda/documents\">Click Here</a> to view all documents.";
+					return "Created successfully. <a href=\"/COMP4601SDA/rest/sda/documents\">Click Here</a> to view all documents.";
 				}
 				else{
 					servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);

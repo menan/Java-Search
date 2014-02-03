@@ -93,7 +93,7 @@ public class Document extends BasicDBObject{
 		links.remove(link);
 	}
 	public String getURL(){
-		return "/COMP4601Assignment1-100770296/rest/sda/" + id;
+		return "/COMP4601SDA/rest/sda/" + id;
 	}
 	
 	public String toHTML(){
