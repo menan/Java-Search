@@ -348,6 +348,38 @@ public abstract class AbstractMongoDBManager {
 	    }
 	    return null;
 	}
+	
+	/**
+	 * Find all documents in the database that contains the given <objToFind> in a certain <field>.
+	 * Returns a List<DBObject> if documents were found.
+	 * 
+	 * @param field
+	 * @param objToFind
+	 * @return List<DBObject>
+	 */
+	public synchronized List<DBObject> search(String field, Object objToFind){
+		BasicDBObject query;
+
+		if(objToFind instanceof List){
+			@SuppressWarnings("unchecked")
+			List<Object> list = (List<Object>) objToFind;
+			ArrayList<BasicDBObject> x = new ArrayList<BasicDBObject>();
+			for(Object o : list){
+				x.add(new BasicDBObject(field.toLowerCase(), o));
+			}
+			query = new BasicDBObject("$and",x);
+		}
+		else
+			query = new BasicDBObject(field.toLowerCase(), new BasicDBObject("$in", objToFind));
+
+
+	    
+	    if(collection != null){
+		    DBCursor cursor = collection.find(query);
+		    return cursor.toArray();
+	    }
+	    return null;
+	}
 
 	/**
 	 * Checks wither a document exist or not.

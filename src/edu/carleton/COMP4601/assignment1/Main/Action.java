@@ -61,13 +61,13 @@ public class Action {
 	@Produces(MediaType.TEXT_HTML)
 	public String getDocumentHTML() throws UnknownHostException {
 		if (id == null || id.isEmpty()){
-			return "Link not found.";
+			return "No such Document: " + id;
 		}
 		Document a;
 		try{
 			a = DocumentsManager.getDefault().load(new Integer(id));
 		}catch(java.lang.NumberFormatException e){
-			return "Link not found.";
+			return "No such Document: " + id;
 		}
 		if (a == null) {
 			return "No such Document: " + id;

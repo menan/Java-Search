@@ -26,12 +26,15 @@ public class DocumentCollection {
 		setDocuments(DocumentsManager.convertDBObject(manager.findAll("id")));
 	}
 	
-	public List<Document> search(String tag){
-		List<Document> results = new ArrayList<Document>();
-		List<DBObject> resultsObj = DocumentsManager.getDefault().search("tags", tag, false);
-		
+	public List<Document> search(String tags_string){
+		List<String> 	tags = new ArrayList<String>(Arrays.asList(tags_string.split(":")));
+		List<DBObject> 	resultsObj = DocumentsManager.getDefault().search("tags", tags);
+
+		List<Document> 	results = new ArrayList<Document>();
 		if (resultsObj != null && resultsObj.size() > 0){
 			results = DocumentsManager.convertDBObject(resultsObj);
+			for(Document d : results)
+				System.out.println(d.toString());
 		}
 		else{
 			System.out.println("no results returned");

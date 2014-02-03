@@ -156,7 +156,7 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	}
 	
 	public static void main(String[] args) {
-		DocumentsManager manager = DocumentsManager.getDefault();
+//		DocumentsManager manager = DocumentsManager.getDefault();
 //		manager.deleteAll("tags", "menan");
 	}
 }
