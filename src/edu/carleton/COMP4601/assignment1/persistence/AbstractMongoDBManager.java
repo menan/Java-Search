@@ -17,6 +17,14 @@ import com.mongodb.WriteResult;
 
 public abstract class AbstractMongoDBManager {
 	
+	/**
+	 * This class is meant to be a generic type of manager for a MongoDB database.
+	 * Implemented functionalities are commonly used, ones like search, add, update, etc.
+	 * User wishes to create a specified manager to store a one type of a class; could
+	 * subclass this abstract class and pass in the <Class> wants to store in MongoDB.
+	 * It also make it easier for user to connect to a MongoDB.
+	 */
+	
 	private static String DEFAULT_HOST = "localhost";
 	private static int DEFAULT_PORT = 27017;
 	

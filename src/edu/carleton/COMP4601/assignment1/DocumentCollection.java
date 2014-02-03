@@ -26,6 +26,15 @@ public class DocumentCollection {
 		setDocuments(DocumentsManager.convertDBObject(manager.findAll("id")));
 	}
 	
+	/**
+	 * Search for tags that are passed as a String in a format like:
+	 * tag1:tag2:tag3:.... Each document in the database will be checked if has
+	 * ALL the passed tags. Lacking one of the passed tags will, a document will
+	 * be not be included in the returned result.
+	 * 
+	 * @param tags_string
+	 * @return
+	 */
 	public List<Document> search(String tags_string){
 		List<String> 	tags = new ArrayList<String>(Arrays.asList(tags_string.split(":")));
 		List<DBObject> 	resultsObj = DocumentsManager.getDefault().search("tags", tags);
@@ -41,6 +50,16 @@ public class DocumentCollection {
 		
 	}
 
+	/**
+	 * Creates a new instance object of the Document class, added to the MongoDB then
+	 * return that new object to caller.
+	 * @param id
+	 * @param name
+	 * @param tags
+	 * @param links
+	 * @param text
+	 * @return
+	 */
 	public Document create(int id, String name, String tags, String links, String text) {
 		Document a = new Document(id);
 		a.setName(name);
@@ -55,6 +74,20 @@ public class DocumentCollection {
 		return a;
 	}
 
+	/**
+	 * This method is used to update an existing field in the database. After finding
+	 * the document with the passed <id>, this method basically checks for all each 
+	 * parameter separately and checks if it has a value; then take that value and 
+	 * set the specified field to that value.
+	 * 
+	 * @param id
+	 * @param name
+	 * @param tags
+	 * @param links
+	 * @param text
+	 * @return boolean
+	 */
+	
 	public boolean update(int id, String name, String tags, String links, String text) {
 		BasicDBObject searchQuery = new BasicDBObject().append("id", id);
 		boolean result = true;
@@ -71,15 +104,27 @@ public class DocumentCollection {
 		return result;
 	}
 	
+	/**
+	 * Returns the size of the "documents" collection.
+	 * @return
+	 */	
 	public int size() {
 		return documents.size();
 	}
 
+	/**
+	 * Return a list of current documents inside of the "documents" collection in MongoDB.
+	 * @return
+	 */
 	public List<Document> getDocuments() {
 		setDocuments(DocumentsManager.convertDBObject(DocumentsManager.getDefault().findAll("id")));
 		return documents;
 	}
 
+	/**
+	 * Set the list of documents to what's passed.
+	 * @param documents
+	 */
 	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
 	}
