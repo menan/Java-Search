@@ -34,5 +34,4 @@ Submission
 3- To update a document use PUT request. For example (XXXX = id):
 > `curl -H "Accept: application/xml" -X PUT "http://localhost:8080/COMP4601SDA/rest/sda/XXXX"`
 
-
-
+4- All necessary libaries are stored inside of directory : `\lib`
