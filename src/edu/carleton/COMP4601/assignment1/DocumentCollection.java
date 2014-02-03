@@ -33,8 +33,6 @@ public class DocumentCollection {
 		List<Document> 	results = new ArrayList<Document>();
 		if (resultsObj != null && resultsObj.size() > 0){
 			results = DocumentsManager.convertDBObject(resultsObj);
-			for(Document d : results)
-				System.out.println(d.toString());
 		}
 		else{
 			System.out.println("no results returned");

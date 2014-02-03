@@ -351,6 +351,7 @@ public abstract class AbstractMongoDBManager {
 	
 	/**
 	 * Find all documents in the database that contains the given <objToFind> in a certain <field>.
+	 * NOTE: AND operator is used in case a List<Object> was passed.
 	 * Returns a List<DBObject> if documents were found.
 	 * 
 	 * @param field
