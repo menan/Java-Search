@@ -3,9 +3,7 @@ package edu.carleton.COMP4601.assignment1.Main;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -19,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import com.mongodb.DBObject;
 
 import edu.carleton.COMP4601.assignment1.*;
 import edu.carleton.COMP4601.assignment1.persistence.DocumentsManager;
@@ -113,6 +109,11 @@ public class SDA {
 	@Path("search/{tags}")
 	@Produces(MediaType.TEXT_HTML)
 	public String searchDocumentsHTML(@PathParam("tags") String tags) throws UnknownHostException {
+		if (tags == null || tags.isEmpty()){
+			System.out.println("No query entered");
+			return "Please enter a query to search";
+		}
+
 		List<Document> resultsDoc = collection.search(tags);
 		String returnStr = "Your search returned " + resultsDoc.size() + " results<table>";
 		
@@ -120,10 +121,21 @@ public class SDA {
 			returnStr += d.toHTML();
 		}
 		returnStr += "</table>";
-		
 		return returnStr;
 	}
 
+
+	@GET
+	@Path("delete/{tags}")
+	public Response deleteDocuments(@PathParam("tags") String tags) throws UnknownHostException {
+		if(!DocumentsManager.getDefault().deleteAll("tags", tags)){
+			return Response.status(HttpServletResponse.SC_NO_CONTENT).build();
+		}
+		System.out.println("Delete was succussful");
+		return Response.status(HttpServletResponse.SC_OK).build();
+	}
+	
+	
 	@POST
 	@Produces(MediaType.TEXT_HTML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -134,7 +146,7 @@ public class SDA {
 			@FormParam("text") String text,
 			@Context HttpServletResponse servletResponse) throws IOException {
 
-		if (name == null || name.isEmpty() || id == null || id.isEmpty() || tags == null || tags.isEmpty() || links == null || links.isEmpty()){
+		if (name == null || name.isEmpty() || id == null || id.isEmpty() || tags == null || tags.isEmpty()){
 			servletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			return "You have to fill all the fields. Please go <a href=\"javascript:history.back()\">back</a> and fill it.";
 		}
@@ -174,7 +186,7 @@ public class SDA {
 			@FormParam("text") String text,
 			@Context HttpServletResponse servletResponse) throws IOException {
 
-		if (name == null || name.isEmpty() || id == null || id.isEmpty() || tags == null || tags.isEmpty() || links == null || links.isEmpty()){
+		if (name == null || name.isEmpty() || id == null || id.isEmpty() || tags == null || tags.isEmpty()){
 			servletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			return null;
 		}
@@ -203,7 +215,7 @@ public class SDA {
 
 	@Path("{doc}")
 	public Action getDocument(@PathParam("doc") String id) {
-		return new Action(uriInfo, request, id);
+		return new Action(uriInfo, request, id, collection);
 	}
 
 }

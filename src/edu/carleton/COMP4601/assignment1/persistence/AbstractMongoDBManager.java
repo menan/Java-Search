@@ -10,7 +10,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.DBPort;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
@@ -25,6 +24,7 @@ public abstract class AbstractMongoDBManager {
 	protected DB db;
 	protected MongoClient mongoClient;
 	protected DBCollection collection;
+	@SuppressWarnings("rawtypes")
 	protected Class objecClass;
 	protected String collection_name;
 
@@ -35,12 +35,12 @@ public abstract class AbstractMongoDBManager {
 
 
 	
-	protected AbstractMongoDBManager(String db_name, String collection_name, Class objecClass){
+	protected AbstractMongoDBManager(String db_name, String collection_name, @SuppressWarnings("rawtypes") Class objecClass){
 		this(DEFAULT_HOST, DEFAULT_PORT, db_name, collection_name, objecClass);
 	}
 	
 	protected AbstractMongoDBManager(String host, int port, String db_name,
-			String collection_name, Class objecClass){
+			String collection_name, @SuppressWarnings("rawtypes") Class objecClass){
 		try {
 			mongoClient = new MongoClient( host , port );
 			db = mongoClient.getDB(db_name);
@@ -232,19 +232,38 @@ public abstract class AbstractMongoDBManager {
 
 	
 	/**
+	 * Deletes all documents that have a <field> of the specified <value>.
+	 * Returns true if successful, otherwise returns false.
+	 * 
+	 * @param field
+	 * @return
+	 */
+	public synchronized boolean deleteAll(String field, String value){
+		String expression = ".*((?i)"+value+").*";
+
+	    DBObject deleteQuery = new BasicDBObject(field.toLowerCase(), new BasicDBObject("$regex", expression));
+
+		return deleteAll(deleteQuery);
+	}
+	
+	
+	/**
 	 * Deletes all documents that meet the <deleteQuery> criteria.
 	 * Returns true if successful, otherwise returns false.
 	 * 
 	 * @param deleteQuery
 	 * @return
 	 */
-	public synchronized boolean deleteAll(BasicDBObject deleteQuery){
+	public synchronized boolean deleteAll(DBObject deleteQuery){
 		if(collection != null){
 			DBCursor cursor = collection.find(deleteQuery);
+			boolean returnVal = cursor.hasNext();
 			while (cursor.hasNext()) {
 			    DBObject item = cursor.next();
-			    collection.remove(item);
-			}	
+			    System.out.println("item:" + item.get("name"));
+			    returnVal = returnVal && collection.remove(item).getLastError().ok();
+			}
+			return returnVal;
 		}
 		return false;
 	}

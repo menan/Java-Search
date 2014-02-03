@@ -1,12 +1,10 @@
 package edu.carleton.COMP4601.assignment1.persistence;
 
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jgraph.graph.DefaultEdge;
-import org.jgrapht.UndirectedGraph;
 
 import com.mongodb.DBObject;
 
@@ -16,8 +14,6 @@ import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
 import edu.carleton.COMP4601.assignment1.Document;
-
-import edu.carleton.COMP4601.assignment1.common.Marshaller;
 
 
 public class DocumentsManager extends AbstractMongoDBManager {
@@ -39,12 +35,12 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	 * @param objectClass
 	 * @return
 	 */
-	private DocumentsManager(String db_name, String collection_name, Class objectClass) {
+	private DocumentsManager(String db_name, String collection_name, @SuppressWarnings("rawtypes") Class objectClass) {
 		super(db_name, collection_name, objectClass);
 	}
 	
 	private DocumentsManager(String host, int port, String db_name,
-			String collection_name, Class objectClass) {
+			String collection_name, @SuppressWarnings("rawtypes") Class objectClass) {
 		super(host, port, db_name, collection_name, objectClass);
 	}
 
@@ -161,7 +157,6 @@ public class DocumentsManager extends AbstractMongoDBManager {
 	
 	public static void main(String[] args) {
 		DocumentsManager manager = DocumentsManager.getDefault();
-		manager.drop();
-		
+//		manager.deleteAll("tags", "menan");
 	}
 }

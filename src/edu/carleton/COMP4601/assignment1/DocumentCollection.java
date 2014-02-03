@@ -1,6 +1,7 @@
 package edu.carleton.COMP4601.assignment1;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import edu.carleton.COMP4601.assignment1.Document;
@@ -18,7 +20,6 @@ import edu.carleton.COMP4601.assignment1.persistence.DocumentsManager;
 public class DocumentCollection {
 	@XmlElement(name="documents")
 	private List<Document> documents;
-	private DocumentsManager manager;
 	
 	public DocumentCollection(){
 		DocumentsManager manager = DocumentsManager.getDefault();
@@ -52,6 +53,23 @@ public class DocumentCollection {
 		}
 		return a;
 	}
+
+	public boolean update(int id, String name, String tags, String links, String text) {
+		BasicDBObject searchQuery = new BasicDBObject().append("id", id);
+		boolean result = true;
+		if(name!=null)
+			result = result && DocumentsManager.getDefault().update("name", name, searchQuery);
+		if(tags!=null)
+			result = result && DocumentsManager.getDefault().update("tags", new ArrayList<String>(Arrays.asList(tags.split(":"))), searchQuery);
+		if(links!=null)
+			result = result && DocumentsManager.getDefault().update("links", new ArrayList<String>(Arrays.asList(links.split(" "))), searchQuery);
+		if(text!=null)
+			result = result && DocumentsManager.getDefault().update("text", text, searchQuery);
+		
+			
+		return result;
+	}
+	
 	public int size() {
 		return documents.size();
 	}

@@ -2,23 +2,17 @@ package edu.carleton.COMP4601.assignment1.Main;
 
 import java.io.FileNotFoundException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 
@@ -33,6 +27,8 @@ public class Action {
 	Request request;
 
 	String id;
+	
+	DocumentCollection collection;
 
 	public Action(UriInfo uriInfo, Request request, String id) {
 		this.uriInfo = uriInfo;
@@ -40,6 +36,14 @@ public class Action {
 		this.id = id;
 	}
 
+	public Action(UriInfo uriInfo, Request request, String id, DocumentCollection coll) {
+		this.uriInfo = uriInfo;
+		this.request = request;
+		this.id = id;
+		this.collection = coll;
+	}
+
+	
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
 	public Document getDocumentXML() throws UnknownHostException {
@@ -56,7 +60,15 @@ public class Action {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String getDocumentHTML() throws UnknownHostException {
-		Document a = DocumentsManager.getDefault().load(new Integer(id));
+		if (id == null || id.isEmpty()){
+			return "Link not found.";
+		}
+		Document a;
+		try{
+			a = DocumentsManager.getDefault().load(new Integer(id));
+		}catch(java.lang.NumberFormatException e){
+			return "Link not found.";
+		}
 		if (a == null) {
 			return "No such Document: " + id;
 		}
@@ -68,26 +80,41 @@ public class Action {
 		// Name
 		builder.append("Name: <b>" + a.getName() + "</b>");
 		// ID
-		builder.append("<br />ID:<b>" + a.getId() + "</b>");
+		builder.append("<br />ID: <b>" + a.getId() + "</b>");
 		// Text
 		builder.append("<br />Text: <b>" + a.getText() + "</b>");
 		// Tags
-		if(a.getTags() != null)
-			builder.append("<br />Tags:<b>" + a.getTags().toString() + "</b>");
+		if(a.getTags() != null && a.getTags().size() > 0){
+			builder.append("<br /><br />Tags: ");
+			for(String tag: a.getTags()){
+				builder.append("<b>" + tag + "</b>, ");
+			}
+		}
 		// Links
-		if(a.getLinks() != null)
-			builder.append("<br />Links:<b>" + a.getLinks().toString());
+		if(a.getLinks() != null && a.getLinks().size() > 0){
+			builder.append("<br /><br />Links:<b><br />");
+			for(String link: a.getLinks()){
+				builder.append("<a href=\"" + link +"\">" +link  +"</a><br />");
+			}
+		}
+			
 		
 		
 		return builder.toString();
 	}
 
 	@PUT
-	@Consumes(MediaType.APPLICATION_XML)
-	public Response putDocument(JAXBElement<Document> doc) throws NumberFormatException, FileNotFoundException, UnknownHostException, JAXBException {
-		Document c = doc.getValue();
-		System.out.println("Document:" + c.getName());
-		return putAndGetResponse(c);
+	public Response putDocument(@FormParam("name") String name,
+			@FormParam("tags") String tags,
+			@FormParam("links") String links,
+			@FormParam("text") String text,
+			@Context HttpServletResponse servletResponse) throws NumberFormatException, FileNotFoundException, UnknownHostException, JAXBException {
+		
+		if(!this.collection.update(new Integer(id).intValue(), name, tags, links, text)){
+			return Response.status(HttpServletResponse.SC_NO_CONTENT).build();
+		}
+		System.out.println("Update was succussful");
+		return Response.status(HttpServletResponse.SC_OK).build();
 	}
 
 	@DELETE
@@ -100,14 +127,4 @@ public class Action {
 		}
 	}
 
-	private Response putAndGetResponse(Document document) throws NumberFormatException, FileNotFoundException, JAXBException, UnknownHostException {
-		Response res = null;
-		boolean put = DocumentsManager.getDefault().save(document);
-		if (put)
-			res = Response.created(uriInfo.getAbsolutePath()).build();
-		else
-			res = Response.status(HttpServletResponse.SC_NO_CONTENT).build();
-			
-		return res;
-	}
 }
