@@ -34,15 +34,27 @@ public class SDA {
 	private String name;
 	private DocumentCollection collection;
 
+	/**
+	 * constructor for SDA class
+	 * defines the home page content
+	 */
 	public SDA() {
 		name = "COMP4601 Searchable Document Archive";
 		collection = new DocumentCollection();
 	}
-
+	/**
+	 * returns the name of the project as a string
+	 * @return
+	 */
 	@GET
 	public String printName() {
 		return name;
 	}
+	
+	/**
+	 * returns xml version of the home page
+	 * @return
+	 */
 
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
@@ -50,6 +62,10 @@ public class SDA {
 		return "<?xml version=\"1.0\"?>" + "<sda> " + name + " </sda>";
 	}
 
+	/**
+	 * returns the HTML version of the home page
+	 * @return
+	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String sayHtml() {
@@ -57,26 +73,23 @@ public class SDA {
 				+ "</body></h1>" + "</html> ";
 	}
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String sayJSON() {
-		return "{" + name + "}";
-	}
-
-	@GET
-	@Path("count")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String getCount() throws UnknownHostException {
-		int count = collection.size();
-		return String.valueOf(count);
-	}
-
+	/**
+	 * returns out the documents as a list of arrays to be printed out as an XML
+	 * @return
+	 * @throws UnknownHostException
+	 */
 	@GET
 	@Path("documents")
 	@Produces(MediaType.APPLICATION_XML)
 	public List<Document> getDocumentsXML() throws UnknownHostException {
 		return collection.getDocuments();
 	}
+	
+	/**
+	 * displays the documents in a neat format
+	 * @return
+	 * @throws UnknownHostException
+	 */
 	
 	@GET
 	@Path("documents")
@@ -95,6 +108,15 @@ public class SDA {
 		
 		return returnStr;
 	}
+	
+	/**
+	 * search function for sda
+	 * tags parameter would be used as a keyword to search
+	 * returns a list of documents so it can be displayed as an XML
+	 * @param tags
+	 * @return
+	 * @throws UnknownHostException
+	 */
 
 	@GET
 	@Path("search/{tags}")
@@ -104,6 +126,14 @@ public class SDA {
 		resultsDoc = collection.search(tags);
 		return resultsDoc;
 	}
+	
+	/**
+	 * html version of the search function
+	 * if there are no queries or no results found in the database, those errors would be printed out
+	 * @param tags
+	 * @return
+	 * @throws UnknownHostException
+	 */
 	
 	@GET
 	@Path("search/{tags}")
@@ -124,7 +154,13 @@ public class SDA {
 		return returnStr;
 	}
 
-
+	
+	/**
+	 * deletes documents that has posted tags parameters and returns the responses accordingly 
+	 * @param tags
+	 * @return
+	 * @throws UnknownHostException
+	 */
 	@GET
 	@Path("delete/{tags}")
 	public Response deleteDocuments(@PathParam("tags") String tags) throws UnknownHostException {
@@ -135,6 +171,18 @@ public class SDA {
 		return Response.status(HttpServletResponse.SC_OK).build();
 	}
 	
+	/**
+	 * creates a new document and displays the error messages accordingly
+	 * if there is already a document found with the same id, it will tell them to alter it
+	 * @param id
+	 * @param name
+	 * @param tags
+	 * @param links
+	 * @param text
+	 * @param servletResponse
+	 * @return
+	 * @throws IOException
+	 */
 	
 	@POST
 	@Produces(MediaType.TEXT_HTML)
@@ -175,6 +223,18 @@ public class SDA {
 
 	}
 
+	/**
+	 * XML version of the create document function.
+	 * returns the right responses based on the actions accordingly
+	 * @param id
+	 * @param name
+	 * @param tags
+	 * @param links
+	 * @param text
+	 * @param servletResponse
+	 * @return
+	 * @throws IOException
+	 */
 
 	@POST
 	@Produces(MediaType.APPLICATION_XML)
@@ -213,6 +273,11 @@ public class SDA {
 		
 	}
 
+	/**
+	 * initializes a document with the parameter id in the url to the Action class for latter usage
+	 * @param id
+	 * @return
+	 */
 	@Path("{doc}")
 	public Action getDocument(@PathParam("doc") String id) {
 		return new Action(uriInfo, request, id, collection);
