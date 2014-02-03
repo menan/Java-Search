@@ -7,6 +7,10 @@ Due Feb 02, 2014 at 11:55 pm
 Last updated 01/30/2014 00:29:28
 
 
+### Students
+Menan Vadivelpillai  100770296
+Abdulrahman Alamoudi 100806966
+
 ### Objective
 The objective of this assignment is to have the student develop a searchable document archive (SDA) using RESTful web services using MongoDB to store the documents.
 Submission
@@ -22,7 +26,7 @@ Submission
 2- To test XML representation, you can use the following commands in the Terminal:
 
 - For "GET" requests:
-> `curl -H "Accept: application/xml" -X GET "http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/"`
+> `curl -H "Accept: application/xml" -X GET "http://localhost:8080/COMP4601SDA/rest/sda/"`
 
 - For "POST" requests:
-> `curl -H "Accept: text/html" -d 'id=1000&name=Doc 1&text=Hello World&links=scs.carleton.ca&tags=COMP 4106:Assignment 1:REST Application' -X POST "http://localhost:8080/COMP4601Assignment1-100770296/rest/sda/"`
+> `curl -H "Accept: text/html" -d 'id=1000&name=Doc 1&text=Hello World&links=scs.carleton.ca&tags=COMP 4106:Assignment 1:REST Application' -X POST "http://localhost:8080/COMP4601SDA/rest/sda/"`
