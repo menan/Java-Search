@@ -30,12 +30,27 @@ public class Action {
 	
 	DocumentCollection collection;
 
+	/**
+	 * constructor for Action class
+	 * @param uriInfo
+	 * @param request
+	 * @param id
+	 * @param coll
+	 */
+	
 	public Action(UriInfo uriInfo, Request request, String id) {
 		this.uriInfo = uriInfo;
 		this.request = request;
 		this.id = id;
 	}
 
+	/**
+	 * constructor for Action class, collection will be reused from SDA class
+	 * @param uriInfo
+	 * @param request
+	 * @param id
+	 * @param coll
+	 */
 	public Action(UriInfo uriInfo, Request request, String id, DocumentCollection coll) {
 		this.uriInfo = uriInfo;
 		this.request = request;
@@ -43,13 +58,16 @@ public class Action {
 		this.collection = coll;
 	}
 
-	
+	/**
+	 * Prints out the XML version of the documet
+	 * @return
+	 * @throws UnknownHostException
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
 	public Document getDocumentXML() throws UnknownHostException {
 		Document a = DocumentsManager.getDefault().load(new Integer(id));
 		if (a == null) {
-//			throw new RuntimeException("No such Document: " + id);
 			System.out.println("No such Document: " + id);
 		}
 		else{
@@ -57,6 +75,11 @@ public class Action {
 		}
 		return a;
 	}
+	/**
+	 * prints out the HTML version of each document
+	 * @return
+	 * @throws UnknownHostException
+	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String getDocumentHTML() throws UnknownHostException {
@@ -102,6 +125,22 @@ public class Action {
 		
 		return builder.toString();
 	}
+	
+	/**
+	 * Modifies the current document with the parameters given.
+	 * Will return response code 200 if it get modified successfully
+	 * will return response code 204 if there is an issue
+	 * @param name
+	 * @param tags
+	 * @param links
+	 * @param text
+	 * @param servletResponse
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws FileNotFoundException
+	 * @throws UnknownHostException
+	 * @throws JAXBException
+	 */
 
 	@PUT
 	public Response putDocument(@FormParam("name") String name,
@@ -117,6 +156,10 @@ public class Action {
 		return Response.status(HttpServletResponse.SC_OK).build();
 	}
 
+	/**
+	 * Deletes a document from the database with the id parameter
+	 * @return
+	 */
 	@DELETE
 	public Response deleteDocument() {
 		if (DocumentsManager.getDefault().remove(new Integer(id))){
